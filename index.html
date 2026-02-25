@@ -272,7 +272,7 @@ function startLoading() {
       </div>
     `;
 
-    fetch('/api/save', {
+fetch('https://schetchik-backend.up.railway.app/api/save', {  // ← Здесь вставьте реальный URL вашего бэкенда на Railway (или другом сервисе)
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
