@@ -260,9 +260,8 @@ els.btnShort.addEventListener("click", () => {
 });
 
 function startLoading() {
-  console.log("🚀 Запуск загрузки. Собранные данные:", data); // ← для отладки
+  console.log("Запуск загрузки, собранные данные:", data); // ← для отладки, увидишь в консоли
 
-  // Скрываем форму, показываем лоадер
   document.querySelector(".max-w-[420px]").classList.add("hidden");
   els.loading.classList.remove("hidden");
 
@@ -275,11 +274,8 @@ function startLoading() {
       </div>
     `;
 
-    const BACKEND_URL = 'https://helper-chek-bot-2026-production.up.railway.app/api/save';
-
-    console.log("Отправляю POST на:", BACKEND_URL); // ← отладка
-
-    fetch(BACKEND_URL, {
+    // ИСПРАВЛЕННЫЙ fetch — правильный URL и метод POST на /api/save
+    fetch('https://helper-chek-bot-2026-production.up.railway.app/api/save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -288,15 +284,12 @@ function startLoading() {
         timestamp: new Date().toISOString()
       })
     })
-    .then(response => {
-      console.log("Ответ от сервера:", response.status, response.ok);
-      return response.json();
+    .then(r => r.json())
+    .then(res => {
+      console.log("Ответ от сервера:", res); // ← увидишь в консоли успех
     })
-    .then(data => {
-      console.log("Успешный ответ:", data);
-    })
-    .catch(error => {
-      console.error("Ошибка при отправке:", error);
+    .catch(err => {
+      console.error("Ошибка при отправке:", err); // ← если ошибка — увидишь
     });
   }, 45000);
 }
