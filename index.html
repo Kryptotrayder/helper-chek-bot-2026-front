@@ -272,7 +272,7 @@ function startLoading() {
       </div>
     `;
 
-fetch('helper-chek-bot-2026-production.up.railway.app', {  // ← Здесь вставьте реальный URL вашего бэкенда на Railway (или другом сервисе)
+fetch('https://helper-chek-bot-2026-production.up.railway.app/checks', {  // ← Здесь вставьте реальный URL вашего бэкенда на Railway (или другом сервисе)
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
